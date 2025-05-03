@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -78,7 +79,7 @@ class Prediction:
     return df
 
   def Preprocess(self):
-    tr_data = pd.read_csv("/content/drive/MyDrive/Project-5-Predict-depression/mental_health/train.csv")
+    tr_data = pd.read_csv("https://raw.githubusercontent.com/Rohini-guvi/Project-5-Predicting-Depression/refs/heads/main/train.csv")
     tr_data.dropna(subset=['Degree','Financial Stress','Dietary Habits'],inplace=True)
     tr_data.drop(tr_data[(tr_data['Profession'].isnull()) & (tr_data['Working Professional or Student']!='Student')].index,inplace=True)
     tr_data.drop(tr_data[(tr_data['Academic Pressure'].isnull()) & (tr_data['Working Professional or Student']=='Student')].index,inplace=True)
@@ -110,18 +111,18 @@ class Prediction:
     
 
 st.subheader("**Mental Health Prediction**")
-try:
-  pid = st.text_input("Enter your ID")
-  name = st.text_input("Enter your Name")
-  gen = st.selectbox("Select your Gender",('Male','Female'))
-  age = st.text_input("Enter your Age")
-  city = st.selectbox("Select your City",('Kalyan', 'Patna', 'Vasai-Virar', 'Kolkata', 'Meerut', 'Ahmedabad',
+
+pid = st.text_input("Enter your ID")
+name = st.text_input("Enter your Name")
+gen = st.selectbox("Select your Gender",('Male','Female'))
+age = st.text_input("Enter your Age")
+city = st.selectbox("Select your City",('Kalyan', 'Patna', 'Vasai-Virar', 'Kolkata', 'Meerut', 'Ahmedabad',
                                 'Visakhapatnam', 'Pune', 'Ludhiana', 'Rajkot', 'Srinagar', 'Mumbai',
                                 'Indore', 'Surat', 'Varanasi', 'Agra', 'Hyderabad', 'Jaipur', 'Kanpur',
                                 'Vadodara', 'Lucknow', 'Nagpur', 'Thane', 'Bangalore', 'Chennai', 'Ghaziabad',
                                 'Delhi', 'Bhopal', 'Faridabad', 'Nashik', 'Other'))
-  role = st.selectbox("Select your role", ("Working Professional","Student"))
-  prof = st.selectbox("Select your Profession",('Student', 'Teacher', 'Content Writer', 'Architect', 'Consultant',
+role = st.selectbox("Select your role", ("Working Professional","Student"))
+prof = st.selectbox("Select your Profession",('Student', 'Teacher', 'Content Writer', 'Architect', 'Consultant',
                                               'HR Manager', 'Pharmacist', 'Doctor', 'Business Analyst',
                                               'Entrepreneur', 'Chemist', 'Financial Analyst', 'Chef',
                                               'Educational Consultant', 'Data Scientist', 'Researcher', 'Lawyer',
@@ -130,50 +131,58 @@ try:
                                               'Software Engineer', 'Civil Engineer', 'UX/UI:Designer', 'Digital Marketer',
                                               'Accountant', 'Mechanical Engineer', 'Graphic Designer', 'Research Analyst',
                                               'Other'))
-  acpres= st.selectbox("Rate your Academic Pressure",(0,1,2,3,4,5))
-  wkpres= st.selectbox("Rate your Work Pressure",(0,1,2,3,4,5))
-  cgpa = st.text_input("Enter your CGPA")
-  ssat = st.selectbox("Rate your Study Satisfaction",(0,1,2,3,4,5))
-  jsat = st.selectbox("Rate your Job Satisfaction",(0,1,2,3,4,5))
-  sleepdur = st.selectbox("Select your Sleep Duration",('Less than 5 hours','7-8 hours','More than 8 hours','5-6 hours','Other'))
-  diet = st.selectbox("Select your Dietary Habits",('Healthy', 'Unhealthy', 'Moderate'))
-  deg = st.text_input("Enter your Degree")
-  suicide = st.selectbox("Have you ever had suicidal thoughts ?",('No','Yes'))
-  hrs = st.text_input("Enter your Work/Study Hours")
-  fstress = st.selectbox("Rate your Financial Stress",(0,1,2,3,4,5))
-  fhis = st.selectbox("Family History of Mental Illness",('No','Yes'))
+acpres= st.selectbox("Rate your Academic Pressure",(0,1,2,3,4,5))
+wkpres= st.selectbox("Rate your Work Pressure",(0,1,2,3,4,5))
+cgpa = st.text_input("Enter your CGPA")
+ssat = st.selectbox("Rate your Study Satisfaction",(0,1,2,3,4,5))
+jsat = st.selectbox("Rate your Job Satisfaction",(0,1,2,3,4,5))
+sleepdur = st.selectbox("Select your Sleep Duration",('Less than 5 hours','7-8 hours','More than 8 hours','5-6 hours','Other'))
+diet = st.selectbox("Select your Dietary Habits",('Healthy', 'Unhealthy', 'Moderate'))
+deg = st.text_input("Enter your Degree")
+suicide = st.selectbox("Have you ever had suicidal thoughts ?",('No','Yes'))
+hrs = st.text_input("Enter your Work/Study Hours")
+fstress = st.selectbox("Rate your Financial Stress",(0,1,2,3,4,5))
+fhis = st.selectbox("Family History of Mental Illness",('No','Yes'))
 
-  if 'clicked' not in st.session_state:
-      st.session_state.clicked = False
+if 'clicked' not in st.session_state:
+  st.session_state.clicked = False
 
-  def click_button():
-      st.session_state.clicked = True
+def click_button():
+  st.session_state.clicked = True
 
-  st.button('Submit', on_click=click_button)
+st.button('Submit', on_click=click_button)
 
-  if st.session_state.clicked:
-    
+if st.session_state.clicked:
+
+  try:
     data=pd.DataFrame({'id' : [pid],'Name' : [name],'Gender': [gen],'Age' : [age],
-    'City' : [city], 'Working Professional or Student' : [role],'Profession' : [prof],
-    'Academic Pressure': [acpres],'Work Pressure': [wkpres],'CGPA': [cgpa],
-    'Study Satisfaction':[ssat],'Job Satisfaction': [jsat],'Sleep Duration': [sleepdur],
-    'Dietary Habits': [diet],'Degree':[deg],"Have you ever had suicidal thoughts ?": [suicide],
-    'Work/Study Hours': [hrs],'Financial Stress': [fstress],'Family History of Mental Illness' : [fhis]})
+                       'City' : [city], 'Working Professional or Student' : [role],'Profession' : [prof],
+                       'Academic Pressure': [acpres],'Work Pressure': [wkpres],'CGPA': [cgpa],
+                       'Study Satisfaction':[ssat],'Job Satisfaction': [jsat],'Sleep Duration': [sleepdur],
+                       'Dietary Habits': [diet],'Degree':[deg],"Have you ever had suicidal thoughts ?": [suicide],
+                       'Work/Study Hours': [hrs],'Financial Stress': [fstress],'Family History of Mental Illness' : [fhis]})
+  except:
+    st.write('After changing the details,Kindly click Submit button to predict your Mental Health!')
 
-    pred = Prediction(data)
-    data_c = pred.Preprocess()
 
-    new_sample_tensor = tf.convert_to_tensor(data_c.values, dtype=tf.float32) 
-    best_model= tf.keras.models.load_model('/content/drive/MyDrive/Project-5-Predict-depression/model.keras')
-    ts_predict= best_model.predict(new_sample_tensor)
-    ts_pred = ts_predict.round().astype(int).flatten()[0]
-    if ts_pred==0:
-      st.subheader(f"**Great {name}!!!, you are Healthy and mentally stable**")
-    else:
-      st.subheader(f"**{name}, No matter how hard things are, Standup and Win over the battle of Depression to enjoy your beautiful life**")
+  pred = Prediction(data)
+  data_c = pred.Preprocess()
 
+  new_sample_tensor = tf.convert_to_tensor(data_c.values, dtype=tf.float32) 
+
+  base_dir = os.path.dirname(os.path.abspath(__file__))
+  model_path = os.path.join(base_dir, 'model.keras')
+
+  best_model= tf.keras.models.load_model(model_path)
+  ts_predict= best_model.predict(new_sample_tensor)
+  ts_pred = ts_predict.round().astype(int).flatten()[0]
+  if ts_pred==0:
+    st.subheader(f"**Great {name}!!!, you are Healthy and mentally stable**")
+  elif ts_pred==1:
+    st.subheader(f"**{name}, No matter how hard things are, Standup and Win over the battle of Depression to enjoy your beautiful life**")
   else:
-      st.write('Kindly click Submit button to predict your Mental Health!')
+    pass
+  
+else:
+  st.write('Kindly click Submit button to predict your Mental Health!')
 
-except:
-  st.write('After changing the details,Kindly click Submit button to predict your Mental Health!')
