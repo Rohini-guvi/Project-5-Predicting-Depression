@@ -163,13 +163,8 @@ try:
     pred = Prediction(data)
     data_c = pred.Preprocess()
 
-    s_col = ['Age', 'Study Satisfaction', 'CGPA', 'Academic Pressure', 'Have you ever had suicidal thoughts ?',
-    'Job Satisfaction', 'Work Pressure', 'Working Professional or Student', 'Financial Stress', 'Work/Study Hours',
-      'Degree', 'Profession', 'Dietary Habits']
-    
-    data_c = data_c[s_col]
     new_sample_tensor = tf.convert_to_tensor(data_c.values, dtype=tf.float32) 
-    best_model= tf.keras.models.load_model('/content/drive/MyDrive/Project-5-Predict-depression/model_rf.keras')
+    best_model= tf.keras.models.load_model('/content/drive/MyDrive/Project-5-Predict-depression/model.keras')
     ts_predict= best_model.predict(new_sample_tensor)
     ts_pred = ts_predict.round().astype(int).flatten()[0]
     if ts_pred==0:
